@@ -32,6 +32,19 @@ jobs:
       working-directory: ./build
       run: VERBOSE=1 cmake -DCMAKE_BUILD_TYPE=Release -DLINK_WITH_PYTHON:BOOL=ON ../
 
+    - name: debug
+      if: failure()
+      shell: bash
+      working-directory: ./build
+      run: |
+        set -x
+        echo "CMakeFiles/CMakeOutput.log"
+        cat CMakeFiles/CMakeOutput.log
+        echo ""
+        echo ""
+        echo "CMakeFiles/CMakeError.log"
+        cat CMakeFiles/CMakeError.log
+
     - name: Build MyProgram
       working-directory: ./build
       shell: bash
