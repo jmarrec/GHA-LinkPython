@@ -30,7 +30,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ./build
-      run: VERBOSE=1 cmake -DCMAKE_BUILD_TYPE=Release -DLINK_WITH_PYTHON:BOOL=ON ../
+      run: VERBOSE=1 cmake -DCMAKE_BUILD_TYPE=Release -DLINK_WITH_PYTHON:BOOL=ON -DPython_ROOT_DIR=$pythonLocation ../
 
     - name: debug
       if: failure()
