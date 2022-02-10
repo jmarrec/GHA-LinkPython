@@ -1,0 +1,48 @@
+name: Linux Build
+
+on: [ push, pull_request ]
+
+jobs:
+  build_and_test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # fail-fast: Default is true, switch to false to allow one platform to fail and still run others
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-18.04, ubuntu-20.04, windows-2019, windows-2022, macos-10.15, macos-11]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.9.9'
+
+    - name: test
+      shell: bash
+      run: |
+        python --version
+        echo $pythonLocation || true
+        which python
+        mkdir build/
+
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ./build
+      run: VERBOSE=1 cmake -DCMAKE_BUILD_TYPE=Release -DLINK_WITH_PYTHON:BOOL=ON ../
+
+    - name: Build MyProgram
+      working-directory: ./build
+      shell: bash
+      run: cmake --build . --target MyProgram -j 2
+
+    - name: Test MyProgram
+      working-directory: ./build
+      shell: bash
+      run: |
+         if [ "$RUNNER_OS" == "Windows" ]; then
+              ./Products/Debug/MyProgram.exe
+         else
+              ./Products/MyProgram
+         fi
